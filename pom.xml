@@ -57,6 +57,12 @@
             <version>3.21.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-jbehave</artifactId>
+            <version>1.46.0</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

@@ -1,14 +1,14 @@
-package steps;
+package testpackage.steps.serenity;
 
 import org.assertj.core.api.Assertions;
 import net.thucydides.core.annotations.Step;
-import pages.SignUpPage;
+import testpackage.pages.SignUpPage;
 
 public class SignUpSteps {
     SignUpPage page;
 
     @Step
-    public void open_sing_up_page() {
+    public void open_sign_up_page() {
         page.open();
     }
 

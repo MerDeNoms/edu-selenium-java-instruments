@@ -1,4 +1,4 @@
-package pages;
+package testpackage.pages;
 
 import net.serenitybdd.core.pages.ListOfWebElementFacades;
 import net.serenitybdd.core.pages.PageObject;

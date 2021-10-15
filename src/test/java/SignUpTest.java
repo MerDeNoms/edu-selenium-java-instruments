@@ -1,70 +1,70 @@
-import com.codeborne.selenide.Condition;
+import net.serenitybdd.core.Serenity;
+import net.serenitybdd.junit.runners.SerenityRunner;
+import net.thucydides.core.annotations.Managed;
+import net.thucydides.core.annotations.Steps;
+import org.assertj.core.api.Assertions;
 import org.junit.*;
+import org.junit.runner.RunWith;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import pages.SignUpPage;
+import steps.SignUpSteps;
 
-import static com.codeborne.selenide.CollectionCondition.size;
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Configuration.baseUrl;
+import java.util.concurrent.TimeUnit;
 
+@RunWith(SerenityRunner.class)
 public class SignUpTest {
-    private SignUpPage page;
 
-    @BeforeClass
-    public static void setUp() {
-        System.setProperty("webdriver.chrome.driver", "D://QA_Auto/chromedriver_win32/chromedriver.exe");
-        baseUrl = "https://www.spotify.com/kg-ru/signup";
-    }
+    @Steps
+    SignUpSteps steps;
 
+    @Managed
+    WebDriver driver;
 
     @Test
     public void typeInvalidYear() {
-        page = new SignUpPage();
-        page.open()
-                .setMonth("Апрель")
-                .typeDay("20")
-                .typeYear("85")
-                .setShare(true);
-        page.getError("Укажите действительный год.").shouldBe(Condition.visible);
-        page.getError("When were you born?").shouldNotBe(Condition.visible);
+        steps.open_sing_up_page();
+        steps.set_month("Апрель");
+        steps.type_day("20");
+        steps.type_year("85");
+        steps.set_share(true);
+        steps.should_see_error("Укажите действительный год.");
+        steps.should_not_see_error("When were you born?");
     }
 
 
     @Test
     public void typeInvalidEmail() {
-        page = new SignUpPage();
-        page.open()
-                .typeEmail("test@mail.test")
-                .typeConfirmEmail("wrong@mail.test")
-                .typeName("Testname")
-                .clickSignUpButton();
-        page.getError("Адреса электронной почты не совпадают.").shouldBe(Condition.visible);
+        steps.open_sing_up_page();
+        steps.type_email("test@mail.test");
+        steps.type_confirmation_mail("wrong@mail.test");
+        steps.type_name("Testname");
+        steps.click_sign_up();
+        steps.should_see_error("Адреса электронной почты не совпадают.");
     }
 
 
     @Test
     public void signUpWithEmptyPassword() {
-        page = new SignUpPage();
-        page.open()
-                .typeEmail("test@mail.test")
-                .typeConfirmEmail("test@mail.test")
-                .typeName("Testname")
-                .clickSignUpButton();
-        page.getError("Введите пароль.").shouldBe(Condition.visible);
+        steps.open_sing_up_page();
+        steps.type_email("test@mail.test");
+        steps.type_confirmation_mail("test@mail.test");
+        steps.type_name("Testname");
+        steps.click_sign_up();
+        steps.should_see_error("Введите пароль.");
     }
 
 
     @Test
     public void typeInvalidValues() {
-        page = new SignUpPage();
-        page.open()
-                .typeEmail("tesmail")
-                .typeConfirmEmail("wrong@mail.test")
-                .typePassword("qweqwe!123")
-                .typeName("Name")
-                .setSex("Мужчина")
-                .setShare(false)
-                .clickSignUpButton();
-        page.getErrors().shouldHave(size(6));
-        page.getErrorByNumber(3).shouldHave(text("Укажите действительный день месяца."));
+        steps.open_sing_up_page();
+        steps.type_email("tesmail");
+        steps.type_confirmation_mail("wrong@mail.test");
+        steps.type_name("Name");
+        steps.select_sex("Мужчина");
+        steps.set_share(false);
+        steps.click_sign_up();
+        steps.should_see_errors_count(7);
+        steps.should_see_error_by_num(4, "Укажите действительный день месяца.");
     }
-
 }

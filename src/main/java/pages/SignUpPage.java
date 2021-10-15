@@ -1,13 +1,15 @@
-import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
+package pages;
+
+import net.serenitybdd.core.pages.ListOfWebElementFacades;
+import net.serenitybdd.core.pages.PageObject;
+import net.thucydides.core.annotations.DefaultUrl;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$$;
-
-public class SignUpPage  {
+@DefaultUrl("https://www.spotify.com/kg-ru/signup")
+public class SignUpPage extends PageObject {
 
     private By emailField = By.cssSelector("input#email");
     private By confirmField = By.cssSelector("input#confirm");
@@ -23,72 +25,70 @@ public class SignUpPage  {
     private By errorLabel = By.xpath("//div[@aria-label = 'Значок ошибки']");
     private String errorByText = "//div[@aria-label = 'Значок ошибки' and text() = '%s']";
 
-    public SignUpPage open() {
-        Selenide.open("/");
-        return this;
-    }
-
     public SignUpPage typeEmail(String email) {
-        $(emailField).sendKeys(email);
+        find(emailField).sendKeys(email);
         return this;
     }
 
     public SignUpPage typeConfirmEmail(String email) {
-        $(confirmField).sendKeys(email);
+        find(confirmField).sendKeys(email);
         return this;
     }
 
     public SignUpPage typePassword(String password) {
-        $(passwordField).sendKeys(password);
+        find(passwordField).sendKeys(password);
         return this;
     }
 
     public SignUpPage typeName(String name) {
-        $(nameField).sendKeys(name);
+        find(nameField).sendKeys(name);
         return this;
     }
 
     public SignUpPage typeDay(String day) {
-        $(dayField).sendKeys(day);
+        find(dayField).sendKeys(day);
         return this;
     }
 
     public SignUpPage setMonth(String month) {
-        $(monthDropDown).selectOption(month);
+        find(monthDropDown).click();
+        find(By.xpath(String.format(monthDropDownOption, month))).waitUntilVisible();
         return this;
     }
 
     public SignUpPage typeYear(String year) {
-        $(yearField).sendKeys(year);
+        find(yearField).sendKeys(year);
         return this;
     }
 
     public SignUpPage setSex(String value) {
-        $(By.xpath(String.format(sexRadioButton, value))).click();
+        find(By.xpath(String.format(sexRadioButton, value))).click();
         return this;
     }
 
     public SignUpPage setShare(boolean value) {
-        if (!$(shareCheckbox).isSelected() == value) {
-            $(shareCheckbox).click();
+        WebElement checkbox = find(shareCheckbox);
+        if (!checkbox.isSelected() == value) {
+            checkbox.click();
         }
         return this;
     }
 
     public void clickSignUpButton() {
-        $(registerButton).click();
+        find(registerButton).click();
     }
 
-    public ElementsCollection getErrors() {
-        return $$(errorLabel);
+    public ListOfWebElementFacades getErrors() {
+        return findAll(errorLabel);
     }
 
-    public SelenideElement getErrorByNumber(int number) {
-        return getErrors().get(number - 1);
+    public String getErrorByNumber(int number) {
+        return getErrors().get(number - 1).getText();
     }
 
-    public SelenideElement getError(String message) {
-        return $(By.xpath(String.format(errorByText, message)));
+    public boolean isErrorVisible(String message) {
+        return findAll(By.xpath(String.format(errorByText, message))).size() > 0
+                && findAll(By.xpath(String.format(errorByText, message))).get(0).isDisplayed();
     }
 
 }
